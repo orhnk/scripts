@@ -17,19 +17,19 @@
 
 # Help message
 if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-  # Non colorized:
+	# Non colorized:
 	# echo "Usage: cgen <project_name>"
 	# echo ""
 	# echo "--install        : Install cgen to /usr/local/bin"
 	# echo "--install --force: Override cgen to /usr/local/bin"
 
-  # Colorized vibrantly:
-  # with the same text above
-  echo -e "\033[32mUsage: cgen <project_name>\033[0m"
-  echo ""
-  echo -e "\033[32m\033[31m--install\033[0m        : Install cgen to /usr/local/bin"
-  echo -e "\033[32m\033[31m--install --force\033[0m: Override cgen to /usr/local/bin"
-  exit 0
+	# Colorized vibrantly:
+	# with the same text above
+	echo -e "\033[32mUsage: cgen <project_name>\033[0m"
+	echo ""
+	echo -e "\033[32m\033[31m--install\033[0m        : Install cgen to /usr/local/bin"
+	echo -e "\033[32m\033[31m--install --force\033[0m: Override cgen to /usr/local/bin"
+	exit 0
 
 fi
 
@@ -40,7 +40,7 @@ fi
 
 if [ "$1" = "--install" ]; then
 	if [ "$2" = "--force" ]; then
-		sudo cp "$(pwd)/cgen.sh" /usr/local/bin/cgen || exit 1
+    sudo ln -sf "$(pwd)/cgen.sh" /usr/local/bin/cgen || exit 1
 		echo -e "\033[32m\033[31mForce\033[0m installed cgen to /usr/local/bin.\033[0m"
 		exit 0
 	fi
@@ -55,7 +55,7 @@ if [ "$1" = "--install" ]; then
 
 # Using --force with --install will override the existing cgen in /usr/local/bin
 elif [ "$1" = "--force" ] && [ "$2" = "--install" ]; then
-	sudo cp "$(pwd)/cgen.sh" /usr/local/bin/cgen || exit 1
+  sudo ln -sf "$(pwd)/cgen.sh" /usr/local/bin/cgen || exit 1
 	echo -e "\033[32m\033[31mForce\033[0m installed cgen to /usr/local/bin.\033[0m"
 	exit 0
 fi
