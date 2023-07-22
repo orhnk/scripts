@@ -15,7 +15,58 @@
 # You can use conan to install dependencies and
 # cmake to build the project.
 
+# Help message
+if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+  # Non colorized:
+	# echo "Usage: cgen <project_name>"
+	# echo ""
+	# echo "--install        : Install cgen to /usr/local/bin"
+	# echo "--install --force: Override cgen to /usr/local/bin"
+
+  # Colorized vibrantly:
+  # with the same text above
+  echo -e "\033[32mUsage: cgen <project_name>\033[0m"
+  echo ""
+  echo -e "\033[32m\033[31m--install\033[0m        : Install cgen to /usr/local/bin"
+  echo -e "\033[32m\033[31m--install --force\033[0m: Override cgen to /usr/local/bin"
+  exit 0
+
+fi
+
+# If you want to use this script anywhere, you can
+# INSTALL (symlink) cgen (this script) if not exists in /usr/local/bin
+# when the first argument is --install
+# Usage: ./cgen.sh --install
+
+if [ "$1" = "--install" ]; then
+	if [ "$2" = "--force" ]; then
+		sudo cp "$(pwd)/cgen.sh" /usr/local/bin/cgen || exit 1
+		echo -e "\033[32m\033[31mForce\033[0m installed cgen to /usr/local/bin.\033[0m"
+		exit 0
+	fi
+	if [ ! -f "/usr/local/bin/cgen" ]; then
+		sudo cp "$(pwd)/cgen.sh" /usr/local/bin/cgen || exit 1
+		exit 0
+	else
+		# Colorize the output with red, green and default
+		echo -e "\033[31m/usr/local/bin/cgen already exists.\033[0m use \033[32m--install --force\033[0m to override."
+		exit 1
+	fi
+
+# Using --force with --install will override the existing cgen in /usr/local/bin
+elif [ "$1" = "--force" ] && [ "$2" = "--install" ]; then
+	sudo cp "$(pwd)/cgen.sh" /usr/local/bin/cgen || exit 1
+	echo -e "\033[32m\033[31mForce\033[0m installed cgen to /usr/local/bin.\033[0m"
+	exit 0
+fi
+
 project_name=$1
+
+# If the first argument is empty, exit
+if [ -z "$project_name" ]; then
+	echo "Please specify a project name." && exit 1
+fi
+
 mkdir "$project_name"
 cd "$project_name" || exit
 
