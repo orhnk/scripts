@@ -109,7 +109,11 @@ fi
 # Description of the $project_name
 echo -n "Description of $project_name: "
 read -r description
-sed -i -e "s/<Description of $project_name here>/""$description"'/gi' conanfile.py
+sed -i "s#<Description of $project_name here>""#$description#gi" conanfile.py
+# If that fails, use another delimiter instead
+if [ $? -ne 0 ]; then
+	sed -i "s/<Description of $project_name here>/$description/g" conanfile.py
+fi
 
 # Topics of the $project_name
 echo -n "Topics of $project_name (Seperate by spaces, Enter to pass): "
@@ -536,11 +540,15 @@ read -r github_template
 if [ "$github_template" = "y" ]; then
 	# Colorized prompt
 	echo -e "\033[32m\033[31mAdding github file template...\033[0m"
-	git clone https://github.com/othneildrew/Best-README-Template.git .
+	git clone https://github.com/othneildrew/Best-README-Template.git tmp
+  cd tmp || exit
 	rm -rf .git
 	rm README.md
 	mv BLANK_README.md README.md
 	mv LICENSE.txt LICENSE # I prefer this way
+  mv ./* ..
+  cd ..
+  rm -rf tmp
 fi
 
 # Add .clang-format and .clang-tidy
@@ -644,7 +652,7 @@ if [ "$dockerfile" = "y" ]; then
   RUN git clone https://git  hub.com/microsoft/vcpkg -b 2020.06 && \
       cd vcpkg && \
       ./bootstrap-vcpkg.sh   -disableMetrics -useSystemBinaries
-  "
+  " >Dockerfile
 	# Note: AI generated:
 	# To build a package:
 	# docker build -t <image_name> .
