@@ -31,8 +31,8 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
 	# with the same text above
 	echo -e "\033[32mUsage: cgen <project_name>\033[0m"
 	echo ""
-	echo -e "\033[32m\033[31m--install\033[0m        : Install cgen to /usr/local/bin"
-	echo -e "\033[32m\033[31m--install --force\033[0m: Override cgen to /usr/local/bin"
+	echo -e "\033[32m\033[36m--install\033[0m        : Install cgen to /usr/local/bin"
+	echo -e "\033[32m\033[36m--install --force\033[0m: Override cgen to /usr/local/bin"
 	exit 0
 
 fi
@@ -44,8 +44,9 @@ fi
 
 if [ "$1" = "--install" ]; then
 	if [ "$2" = "--force" ]; then
+		echo -e "\033[36mForce installing cgen to /usr/local/bin\033[0m"
 		sudo ln -sf "$(pwd)/cgen.sh" /usr/local/bin/cgen || exit 1
-		echo -e "\033[32m\033[31mForce\033[0m installed cgen to /usr/local/bin.\033[0m"
+		echo -e "\033[32m\033[32mSuccess!\033[0m"
 		exit 0
 	fi
 	if [ ! -f "/usr/local/bin/cgen" ]; then
@@ -59,8 +60,9 @@ if [ "$1" = "--install" ]; then
 
 # Using --force with --install will override the existing cgen in /usr/local/bin
 elif [ "$1" = "--force" ] && [ "$2" = "--install" ]; then
+	echo -e "\033[36mForce installing cgen to /usr/local/bin\033[0m"
 	sudo ln -sf "$(pwd)/cgen.sh" /usr/local/bin/cgen || exit 1
-	echo -e "\033[32m\033[31mForce\033[0m installed cgen to /usr/local/bin.\033[0m"
+	echo -e "\033[32m\033[32mSuccess!\033[0m"
 	exit 0
 fi
 
@@ -68,7 +70,7 @@ project_name=$1
 
 # If the first argument is empty, exit
 if [ -z "$project_name" ]; then
-	echo "Please specify a project name." && exit 1
+	echo -e "\033[31mSpecify a project name\033[0m"
 fi
 
 mkdir "$project_name"
@@ -127,7 +129,6 @@ for element in "${array[@]}"; do
 	topics_str+="\"$element\", "
 done
 topics_str=${topics_str::-2} # remove the last comma and space
-echo "$topics_str"
 
 sed -i 's/\"<Put some tag here>\", \"<here>\", \"<and here>\"/'"$topics_str"'/g' conanfile.py
 
@@ -147,8 +148,10 @@ sed -i 's/"build_type"/'\""$build_type"\"'/g' conanfile.py
 echo -n "Arch: "
 read -r arch
 sed -i 's/"arch"/'\""$arch"\"'/g' conanfile.py
+echo -e "\033[32m\033[32mPreferences set succesfully!\033[0m"
 
 # Write .gitingore for future build mess
+echo -e "\033[36mAdding .gitingore\033[0m"
 echo "
 [Bb]uild/*
 [Dd]ocs/*
@@ -281,9 +284,6 @@ ipch/
 
 # Visual Studio Trace Files
 *.e2e
-
-# TFS 2012 Local Workspace
-$tf/
 
 # Guidance Automation Toolkit
 *.gpState
@@ -537,18 +537,20 @@ MigrationBackup/
 echo -n "Do you want to add github file template? (y/n): "
 read -r github_template
 
+echo -e "\033[36mAdding github template\033[0m"
 if [ "$github_template" = "y" ]; then
 	# Colorized prompt
 	echo -e "\033[32m\033[31mAdding github file template...\033[0m"
 	git clone https://github.com/othneildrew/Best-README-Template.git tmp
-  cd tmp || exit
+	cd tmp || exit
 	rm -rf .git
 	rm README.md
 	mv BLANK_README.md README.md
 	mv LICENSE.txt LICENSE # I prefer this way
-  mv ./* ..
-  cd ..
-  rm -rf tmp
+	mv ./* ..
+	cd ..
+	rm -rf tmp
+	echo -e "\033[32m\033[32mSuccess!\033[0m"
 fi
 
 # Add .clang-format and .clang-tidy
@@ -557,7 +559,7 @@ read -r clang_format_tidy
 
 if [ "$clang_format_tidy" = "y" ]; then
 	# Colorized prompt
-	echo -e "\033[32m\033[31mAdding .clang-format and .clang-tidy...\033[0m"
+	echo -e "\033[36mAdding .clang-tidy.\033[0m"
 	echo "---
   Checks: '*,-fuchsia-*,-google-*,-zircon-*,-abseil-*,-modernize-use-trailing-return-type,-llvm-*,-llvmlibc-*'
   CheckOptions: [{ key: misc-non-private-member-variables-in-classes, value: IgnoreClassesWithAllMemberVariablesBeingPublic }]
@@ -566,6 +568,7 @@ if [ "$clang_format_tidy" = "y" ]; then
   FormatStyle: none
   " >.clang-tidy
 
+	echo -e "\033[36mAdding .clang-format.\033[0m"
 	echo "---
   BasedOnStyle: Google
   AlignAfterOpenBracket: 'AlwaysBreak'
@@ -591,6 +594,7 @@ if [ "$clang_format_tidy" = "y" ]; then
   Standard: 'Latest'
   ...
   " >.clang-format
+	echo -e "\033[32m\033[32mSuccess!\033[0m"
 fi
 
 # Dockerfile Integration
@@ -599,7 +603,7 @@ read -r dockerfile
 
 if [ "$dockerfile" = "y" ]; then
 	# Colorized prompt
-	echo -e "\033[32m\033[31mAdding Dockerfile...\033[0m"
+	echo -e "\033[36mAdding Dockerfile.\033[0m"
 	echo "FROM ubuntu:18.04
 
   RUN echo \"Updating Ubuntu  \"
@@ -653,6 +657,7 @@ if [ "$dockerfile" = "y" ]; then
       cd vcpkg && \
       ./bootstrap-vcpkg.sh   -disableMetrics -useSystemBinaries
   " >Dockerfile
+	echo -e "\033[32m\033[32mSuccess!\033[0m"
 	# Note: AI generated:
 	# To build a package:
 	# docker build -t <image_name> .
