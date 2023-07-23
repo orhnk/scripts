@@ -118,12 +118,12 @@ if [ $? -ne 0 ]; then
 fi
 
 # Topics of the $project_name
-echo -n "Topics of $project_name (Seperate by spaces, Enter to pass): "
+echo -n "Topics of $project_name (Separate by spaces, Enter to pass): "
 read -r topics
 # split spaces
 IFS=' ' read -r -a array <<<"$topics"
 
-# Print the array, seperated with commas
+# Print the array, separated with commas
 topics_str=""
 for element in "${array[@]}"; do
 	topics_str+="\"$element\", "
@@ -131,24 +131,6 @@ done
 topics_str=${topics_str::-2} # remove the last comma and space
 
 sed -i 's/\"<Put some tag here>\", \"<here>\", \"<and here>\"/'"$topics_str"'/g' conanfile.py
-
-# os, copiler, build_type, arch
-echo -n "OS: "
-read -r os
-sed -i 's/"os"/'\""$os"\"'/g' conanfile.py
-
-echo -n "Compiler: "
-read -r compiler
-sed -i 's/"compiler"/'\""$compiler"\"'/g' conanfile.py
-
-echo -n "Build type: "
-read -r build_type
-sed -i 's/"build_type"/'\""$build_type"\"'/g' conanfile.py
-
-echo -n "Arch: "
-read -r arch
-sed -i 's/"arch"/'\""$arch"\"'/g' conanfile.py
-echo -e "\033[32m\033[32mPreferences set succesfully!\033[0m"
 
 # Write .gitingore for future build mess
 echo -e "\033[36mAdding .gitingore\033[0m"
@@ -606,10 +588,10 @@ if [ "$dockerfile" = "y" ]; then
 	echo -e "\033[36mAdding Dockerfile.\033[0m"
 	echo "FROM ubuntu:18.04
 
-  RUN echo \"Updating Ubuntu  \"
-  RUN apt-get update && apt  -get upgrade -y
+  RUN echo \"Updating Ubuntu\"
+  RUN apt-get update && apt -get upgrade -y
 
-  RUN echo \"Installing depe  ndencies...\"
+  RUN echo \"Installing dependencies...\"
   RUN apt install -y \
         ccache \
         clang \
@@ -629,33 +611,33 @@ if [ "$dockerfile" = "y" ]; then
         unzip \
         vim
 
-  RUN echo \"Installing depe  ndencies not found in the package repos...\"
+  RUN echo \"Installing dependencies not found in the package repos...\"
 
-  RUN apt install -y wget t  ar build-essential libssl-dev && \
-        wget https://github  .com/Kitware/CMake/releases/download/v3.15.0/cmake-3.15.0.tar.gz && \
-        tar -zxvf cmake-3.1  5.0.tar.gz && \
-        cd cmake-3.15.0 &&   \
+  RUN apt install -y wget tar build-essential libssl-dev && \
+        wget https://github.com/Kitware/CMake/releases/download/v3.15.0/cmake-3.15.0.tar.gz && \
+        tar -zxvf cmake-3.15.0.tar.gz && \
+        cd cmake-3.15.0 && \
         ./bootstrap && \
         make && \
         make install 
 
   RUN pip3 install conan
 
-  RUN git clone https://git  hub.com/catchorg/Catch2.git && \
+  RUN git clone https://github.com/catchorg/Catch2.git && \
        cd Catch2 && \
-       cmake -Bbuild -H. -D  BUILD_TESTING=OFF && \
-       cmake --build build/   --target install
+       cmake -Bbuild -H. -DBUILD_TESTING=OFF && \
+       cmake --build build/ --target install
 
-  # Disabled pthread suppor  t for GTest due to linking errors
-  RUN git clone https://git  hub.com/google/googletest.git --branch release-1.10.0 && \
-          cd googletest &&   \
-          cmake -Bbuild -Dg  test_disable_pthreads=1 && \
-          cmake --build bui  ld --config Release && \
-          cmake --build bui  ld --target install --config Release
+  # Disabled pthread support for GTest due to linking errors
+  RUN git clone https://github.com/google/googletest.git --branch release-1.10.0 && \
+          cd googletest && \
+          cmake -Bbuild -Dgtest_disable_pthreads=1 && \
+          cmake --build build --config Release && \
+          cmake --build build --target install --config Release
 
-  RUN git clone https://git  hub.com/microsoft/vcpkg -b 2020.06 && \
+  RUN git clone https://github.com/microsoft/vcpkg -b 2020.06 && \
       cd vcpkg && \
-      ./bootstrap-vcpkg.sh   -disableMetrics -useSystemBinaries
+      ./bootstrap-vcpkg.sh -disableMetrics -useSystemBinaries
   " >Dockerfile
 	echo -e "\033[32m\033[32mSuccess!\033[0m"
 	# Note: AI generated:
