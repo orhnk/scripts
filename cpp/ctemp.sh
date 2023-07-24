@@ -95,7 +95,7 @@ if [ -d "$project_name" ]; then
 	fi
 fi
 
-git clone https://github.com/filipdutescu/modern-cpp-template/ "$project_name"
+git clone https://github.com/UTFeight/Cpp-Cmake-Template "$project_name"
 cd "$project_name" || exit 1
 rm -rf ./.git
 
